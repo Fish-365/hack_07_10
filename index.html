@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Проверка вакансии</title>
+    <style>
+      :root {
+        --bg: rgb(41, 41, 41);
+        --surface: rgb(48, 48, 48);
+        --surface-soft: rgb(45, 45, 45);
+        --text: #ffffff;
+        --muted: rgba(255, 255, 255, 0.68);
+        --line: rgba(242, 145, 223, 0.22);
+        --primary: rgb(242, 145, 223);
+        --primary-hover: rgb(248, 174, 233);
+        --primary-soft: rgba(242, 145, 223, 0.12);
+        --safe: rgb(242, 145, 223);
+        --safe-soft: rgba(242, 145, 223, 0.12);
+        --medium: rgb(242, 145, 223);
+        --medium-soft: rgba(242, 145, 223, 0.16);
+        --danger: rgb(242, 145, 223);
+        --danger-soft: rgba(242, 145, 223, 0.14);
+        --shadow: 0 22px 55px rgba(0, 0, 0, 0.28);
+        --radius-lg: 24px;
+        --radius-md: 16px;
+        --radius-sm: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        background:
+          radial-gradient(
+            circle at 10% 5%,
+            rgba(242, 145, 223, 0.12),
+            transparent 34%
+          ),
+          radial-gradient(
+            circle at 92% 90%,
+            rgba(242, 145, 223, 0.05),
+            transparent 30%
+          ),
+          var(--bg);
+        color: var(--text);
+      }
+
+      button,
+      textarea {
+        font: inherit;
+      }
+
+      .page {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 56px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 40px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        background: var(--primary);
+        color: rgb(41, 41, 41);
+        box-shadow: 0 9px 24px rgba(242, 145, 223, 0.24);
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 14px;
+        padding: 9px 12px;
+        border: 1px solid var(--line);
+        background: rgba(41, 41, 41, 0.78);
+        border-radius: 999px;
+        backdrop-filter: blur(8px);
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--safe);
+        box-shadow: 0 0 0 4px rgba(242, 145, 223, 0.12);
+      }
+
+      .hero {
+        text-align: center;
+        max-width: 760px;
+        margin: 0 auto 28px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        color: var(--primary);
+        background: var(--primary-soft);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+
+      h1 {
+        font-size: clamp(34px, 5vw, 56px);
+        line-height: 1.04;
+        letter-spacing: -0.045em;
+        margin: 0;
+      }
+
+      .hero p {
+        margin: 18px auto 0;
+        color: var(--muted);
+        font-size: clamp(16px, 2vw, 19px);
+        line-height: 1.6;
+        max-width: 650px;
+      }
+
+      .panel {
+        background: rgba(48, 48, 48, 0.94);
+        border: 1px solid rgba(242, 145, 223, 0.18);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .input-panel {
+        padding: 22px;
+      }
+
+      .input-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 16px;
+        margin-bottom: 12px;
+      }
+
+      .input-head h2 {
+        margin: 0;
+        font-size: 17px;
+        letter-spacing: -0.015em;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 5px;
+      }
+
+      .counter {
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 250px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        background: var(--surface-soft);
+        color: var(--text);
+        border-radius: var(--radius-md);
+        padding: 18px;
+        outline: none;
+        line-height: 1.55;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s,
+          background 0.2s;
+      }
+
+      textarea::placeholder {
+        color: rgba(255, 255, 255, 0.38);
+      }
+
+      textarea:focus {
+        border-color: rgba(242, 145, 223, 0.72);
+        box-shadow: 0 0 0 4px rgba(242, 145, 223, 0.12);
+        background: rgb(41, 41, 41);
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .btn {
+        min-height: 54px;
+        border-radius: 14px;
+        border: 1px solid transparent;
+        padding: 0 18px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 9px;
+        cursor: pointer;
+        font-weight: 750;
+        transition:
+          transform 0.15s,
+          background 0.18s,
+          border-color 0.18s,
+          box-shadow 0.18s,
+          color 0.18s;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      /* Стили для неактивной кнопки (кулдаун) */
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background: #3a3a3a !important;
+        border-color: #2a2a2a !important;
+        color: #777 !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: rgb(41, 41, 41);
+        box-shadow: 0 10px 24px rgba(242, 145, 223, 0.2);
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: var(--primary-hover);
+      }
+
+      .btn-secondary {
+        background: rgb(41, 41, 41);
+        border-color: var(--line);
+        color: var(--text);
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        border-color: var(--primary);
+        background: rgba(242, 145, 223, 0.08);
+      }
+
+      .helper-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .text-link {
+        border: 0;
+        background: transparent;
+        padding: 0;
+        color: var(--primary);
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .results {
+        margin-top: 22px;
+        display: none;
+      }
+
+      .results.visible {
+        display: block;
+        animation: reveal 0.32s ease;
+      }
+
+      @keyframes reveal {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .result-head {
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        gap: 24px;
+        padding: 24px;
+        align-items: center;
+      }
+
+      .score-wrap {
+        display: grid;
+        place-items: center;
+      }
+
+      .score-ring {
+        --score: 0;
+        --ring: var(--safe);
+        width: 138px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: conic-gradient(
+          var(--ring) calc(var(--score) * 1%),
+          rgba(255, 255, 255, 0.1) 0
+        );
+        position: relative;
+      }
+
+      .score-ring::after {
+        content: '';
+        width: 106px;
+        aspect-ratio: 1;
+        background: rgb(41, 41, 41);
+        border-radius: 50%;
+        position: absolute;
+      }
+
+      .score-value {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        font-weight: 850;
+        font-size: 31px;
+        letter-spacing: -0.04em;
+      }
+
+      .score-value small {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0;
+        margin-top: 2px;
+        font-weight: 650;
+      }
+
+      .badge {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 10px;
+      }
+
+      .badge.low {
+        color: var(--safe);
+        background: var(--safe-soft);
+      }
+      .badge.medium {
+        color: var(--medium);
+        background: var(--medium-soft);
+      }
+      .badge.high {
+        color: var(--danger);
+        background: var(--danger-soft);
+      }
+
+      .summary-title {
+        font-size: 23px;
+        font-weight: 830;
+        letter-spacing: -0.025em;
+        margin-bottom: 9px;
+      }
+
+      .summary-text {
+        color: var(--muted);
+        line-height: 1.65;
+        margin: 0;
+      }
+
+      .details {
+        border-top: 1px solid var(--line);
+        padding: 22px;
+        display: none;
+      }
+
+      .details.visible {
+        display: block;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .detail-card {
+        border: 1px solid var(--line);
+        background: var(--surface-soft);
+        border-radius: var(--radius-md);
+        padding: 17px;
+        min-width: 0;
+      }
+
+      .detail-card.wide {
+        grid-column: 1 / -1;
+      }
+
+      .detail-card h3 {
+        margin: 0 0 11px;
+        font-size: 15px;
+        letter-spacing: -0.01em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .detail-card ul {
+        margin: 0;
+        padding-left: 20px;
+        color: rgba(255, 255, 255, 0.76);
+        line-height: 1.6;
+      }
+
+      .detail-card li + li {
+        margin-top: 7px;
+      }
+      .detail-card p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.76);
+        line-height: 1.6;
+      }
+
+      .empty-state {
+        color: var(--muted);
+        font-size: 14px;
+        font-style: italic;
+      }
+
+      .loader {
+        display: none;
+        margin-top: 22px;
+        padding: 24px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .loader.visible {
+        display: block;
+      }
+
+      .spinner {
+        width: 30px;
+        height: 30px;
+        border: 3px solid rgba(255, 255, 255, 0.12);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 0.75s linear infinite;
+        margin: 0 auto 12px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .error-box {
+        display: none;
+        margin-top: 16px;
+        padding: 14px 16px;
+        border: 1px solid rgba(242, 145, 223, 0.36);
+        background: var(--danger-soft);
+        color: var(--primary);
+        border-radius: 13px;
+        line-height: 1.45;
+        font-size: 14px;
+      }
+
+      .error-box.visible {
+        display: block;
+      }
+
+      .footer-note {
+        text-align: center;
+        margin: 22px auto 0;
+        max-width: 700px;
+        color: rgba(255, 255, 255, 0.46);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          width: min(100% - 20px, 1120px);
+          padding-top: 16px;
+        }
+        .topbar {
+          margin-bottom: 28px;
+        }
+        .status {
+          display: none;
+        }
+        .input-panel {
+          padding: 14px;
+        }
+        textarea {
+          min-height: 220px;
+        }
+        .actions {
+          grid-template-columns: 1fr;
+        }
+        .result-head {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+        .badge {
+          margin-inline: auto;
+        }
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+        .helper-row {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 2.8 20 6v5.2c0 5.2-3.4 8.5-8 10-4.6-1.5-8-4.8-8-10V6l8-3.2Z"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="m8.2 12 2.5 2.5 5.2-5.4"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <span>Проверка вакансии</span>
+        </div>
+        <div class="status">
+          <span class="status-dot"></span>Сервис готов к анализу
+        </div>
+      </header>
+
+      <section class="hero">
+        <div class="eyebrow">AI + машинное обучение</div>
+        <h1>Проверь вакансию перед откликом</h1>
+        <p>
+          Вставьте текст объявления. Сервис оценит риск и подскажет, на какие
+          детали стоит обратить внимание до передачи денег, документов или
+          банковских данных.
+        </p>
+      </section>
+
+      <section class="panel input-panel">
+        <div class="input-head">
+          <div>
+            <h2>Текст вакансии</h2>
+            <div class="hint">
+              Можно вставить объявление целиком или переписку с работодателем.
+            </div>
+          </div>
+          <div class="counter"><span id="charCount">0</span> символов</div>
+        </div>
+
+        <textarea
+          id="vacancyInput"
+          maxlength="12000"
+          placeholder="Например: Ищем сотрудника на удалённую работу. Оплата от 8 000 ₽ в день. Для доступа к заданиям необходимо внести страховой депозит..."
+        ></textarea>
+
+        <div class="actions">
+          <button
+            class="btn btn-primary"
+            id="analyzeBtn"
+            type="button"
+            disabled
+          >
+            <svg
+              width="19"
+              height="19"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M4 19.5V10m5.3 9.5V4.5m5.4 15v-7m5.3 7V8"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+            Отправить на анализ
+          </button>
+          <button
+            class="btn btn-secondary"
+            id="detailsBtn"
+            type="button"
+            disabled
+          >
+            <svg
+              width="19"
+              height="19"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+            Подробный разбор
+          </button>
+        </div>
+
+        <div class="helper-row">
+          <span
+            >Не вводите CVV, коды из SMS, паспортные данные и другие секретные
+            данные.</span
+          >
+          <button class="text-link" id="exampleBtn" type="button">
+            Вставить пример
+          </button>
+        </div>
+
+        <div class="error-box" id="errorBox" role="alert"></div>
+      </section>
+
+      <section class="panel loader" id="loader" aria-live="polite">
+        <div class="spinner"></div>
+        <div id="loaderText">Анализируем вакансию…</div>
+      </section>
+
+      <section class="panel results" id="results" aria-live="polite">
+        <div class="result-head">
+          <div class="score-wrap">
+            <div class="score-ring" id="scoreRing">
+              <div class="score-value">
+                <span id="scoreValue">0%</span><small>риск</small>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="badge low" id="riskBadge">Низкий риск</div>
+            <div class="summary-title" id="summaryTitle">Результат анализа</div>
+            <p class="summary-text" id="summaryText"></p>
+          </div>
+        </div>
+
+        <div class="details" id="detailsBlock">
+          <div class="detail-grid">
+            <article class="detail-card">
+              <h3>⚠️ Тревожные признаки</h3>
+              <div id="redFlags"></div>
+            </article>
+            <article class="detail-card">
+              <h3>🔎 Чего не хватает</h3>
+              <div id="missingInfo"></div>
+            </article>
+            <article class="detail-card">
+              <h3>💬 Что спросить</h3>
+              <div id="questions"></div>
+            </article>
+            <article class="detail-card">
+              <h3>🛡️ Что делать безопасно</h3>
+              <div id="safeActions"></div>
+            </article>
+            <article class="detail-card wide">
+              <h3>💰 Комментарий о зарплате</h3>
+              <p id="salaryComment"></p>
+            </article>
+            <article class="detail-card wide">
+              <h3>🤖 Сигнал модели</h3>
+              <p id="mlComment"></p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <p class="footer-note">
+        Автоматическая оценка помогает заметить риск, но не заменяет проверку
+        работодателя, реквизитов и условий договора.
+      </p>
+    </main>
+
+    <script>
+      const API = {
+        quick: '/api/analyze',
+        detailed: '/api/detailed-analysis',
+      };
+
+      const vacancyInput = document.getElementById('vacancyInput');
+      const charCount = document.getElementById('charCount');
+      const analyzeBtn = document.getElementById('analyzeBtn');
+      const detailsBtn = document.getElementById('detailsBtn');
+      const exampleBtn = document.getElementById('exampleBtn');
+      const results = document.getElementById('results');
+      const detailsBlock = document.getElementById('detailsBlock');
+      const loader = document.getElementById('loader');
+      const loaderText = document.getElementById('loaderText');
+      const errorBox = document.getElementById('errorBox');
+
+      // Храним тексты, для которых уже был сделан анализ в конкретном режиме
+      const lastAnalyzedText = { quick: null, detailed: null };
+
+      // Функция обновления активности кнопок
+      function updateButtonStates() {
+        const currentText = vacancyInput.value.trim();
+        const isShort = currentText.length < 20;
+
+        // Отключаем, если текст короткий или полностью совпадает с ранее отправленным в этом режиме
+        analyzeBtn.disabled = isShort || currentText === lastAnalyzedText.quick;
+        detailsBtn.disabled =
+          isShort || currentText === lastAnalyzedText.detailed;
+      }
+
+      vacancyInput.addEventListener('input', () => {
+        charCount.textContent =
+          vacancyInput.value.length.toLocaleString('ru-RU');
+        hideError();
+        updateButtonStates();
+      });
+
+      exampleBtn.addEventListener('click', () => {
+        vacancyInput.value =
+          'Удалённая подработка без опыта. Доход от 7000 рублей в день. Для получения доступа к заданиям нужно оплатить страховой взнос 1490 рублей. После этого менеджер добавит вас в рабочий чат. Договор оформим позже. Оплата каждый день на карту.';
+        vacancyInput.dispatchEvent(new Event('input'));
+        vacancyInput.focus();
+      });
+
+      analyzeBtn.addEventListener('click', () => runAnalysis(false));
+      detailsBtn.addEventListener('click', () => runAnalysis(true));
+
+      async function runAnalysis(detailed) {
+        const vacancyText = vacancyInput.value.trim();
+
+        if (vacancyText.length < 20) {
+          showError(
+            'Добавьте текст вакансии — хотя бы несколько предложений, чтобы анализ был содержательным.',
+          );
+          vacancyInput.focus();
+          return;
+        }
+
+        setLoading(
+          true,
+          detailed ? 'Готовим подробный разбор…' : 'Оцениваем уровень риска…',
+        );
+        hideError();
+        results.classList.remove('visible');
+
+        try {
+          const endpoint = detailed ? API.detailed : API.quick;
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ vacancy_text: vacancyText }),
+          });
+
+          // Если сервер вернул ошибку, парсим JSON и выводим текст (включая ошибку 429 при кулдауне)
+          if (!response.ok) {
+            let errorMsg = `Сервер вернул ошибку ${response.status}`;
+            try {
+              const errData = await response.json();
+              if (errData.detail) errorMsg = errData.detail;
+            } catch (e) {}
+            throw new Error(errorMsg);
+          }
+
+          const data = await response.json();
+
+          // Успешно получили данные — запоминаем текст для кулдауна
+          if (detailed) {
+            lastAnalyzedText.detailed = vacancyText;
+          } else {
+            lastAnalyzedText.quick = vacancyText;
+          }
+
+          renderResult(normalizeResponse(data), detailed);
+        } catch (error) {
+          showError(error.message);
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      function normalizeResponse(data) {
+        const probability = clamp(
+          Number(
+            data.scam_probability ??
+              data.probability ??
+              data.risk_probability ??
+              levelToProbability(data.risk_level),
+          ),
+          0,
+          1,
+        );
+
+        return {
+          risk_level: data.risk_level || probabilityToLevel(probability),
+          scam_probability: probability,
+          summary:
+            data.summary ||
+            'Анализ завершён. Проверьте выделенные признаки перед откликом.',
+          red_flags: Array.isArray(data.red_flags) ? data.red_flags : [],
+          missing_information: Array.isArray(data.missing_information)
+            ? data.missing_information
+            : [],
+          questions_to_employer: Array.isArray(data.questions_to_employer)
+            ? data.questions_to_employer
+            : [],
+          safe_actions: Array.isArray(data.safe_actions)
+            ? data.safe_actions
+            : [],
+          salary_comment:
+            data.salary_comment ||
+            'Оценивайте зарплату вместе с обязанностями, договором и прозрачностью условий.',
+          ml_signal_comment:
+            data.ml_signal_comment ||
+            'Результат модели — дополнительный сигнал, а не окончательный вывод.',
+        };
+      }
+
+      function renderResult(data, detailed) {
+        const probability = clamp(
+          Number(data.scam_probability ?? levelToProbability(data.risk_level)),
+          0,
+          1,
+        );
+        const percent = Math.round(probability * 100);
+        const level = ['low', 'medium', 'high'].includes(data.risk_level)
+          ? data.risk_level
+          : probabilityToLevel(probability);
+
+        const levelConfig = {
+          low: {
+            label: 'Низкий риск',
+            title: 'Явных стоп-сигналов немного',
+            color: 'var(--safe)',
+          },
+          medium: {
+            label: 'Средний риск',
+            title: 'Есть детали, которые стоит проверить',
+            color: 'var(--medium)',
+          },
+          high: {
+            label: 'Высокий риск',
+            title: 'Есть серьёзные тревожные признаки',
+            color: 'var(--danger)',
+          },
+        }[level];
+
+        document.getElementById('scoreValue').textContent = `${percent}%`;
+        const ring = document.getElementById('scoreRing');
+        ring.style.setProperty('--score', percent);
+        ring.style.setProperty('--ring', levelConfig.color);
+
+        const badge = document.getElementById('riskBadge');
+        badge.className = `badge ${level}`;
+        badge.textContent = levelConfig.label;
+
+        document.getElementById('summaryTitle').textContent = levelConfig.title;
+        document.getElementById('summaryText').textContent = data.summary;
+
+        renderList(
+          'redFlags',
+          data.red_flags,
+          'Явных тревожных признаков не найдено.',
+        );
+        renderList(
+          'missingInfo',
+          data.missing_information,
+          'Критичных пробелов не отмечено.',
+        );
+        renderList(
+          'questions',
+          data.questions_to_employer,
+          'Дополнительных вопросов не сформировано.',
+        );
+        renderList(
+          'safeActions',
+          data.safe_actions,
+          'Дополнительных действий не сформировано.',
+        );
+        document.getElementById('salaryComment').textContent =
+          data.salary_comment;
+        document.getElementById('mlComment').textContent =
+          data.ml_signal_comment;
+
+        detailsBlock.classList.toggle('visible', detailed);
+        results.classList.add('visible');
+        results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function renderList(targetId, items, emptyText) {
+        const target = document.getElementById(targetId);
+        target.innerHTML = '';
+
+        if (!items || items.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.textContent = emptyText;
+          target.appendChild(empty);
+          return;
+        }
+
+        const ul = document.createElement('ul');
+        items.forEach((item) => {
+          const li = document.createElement('li');
+          li.textContent = item;
+          ul.appendChild(li);
+        });
+        target.appendChild(ul);
+      }
+
+      function setLoading(isLoading, text = 'Анализируем вакансию…') {
+        if (isLoading) {
+          analyzeBtn.disabled = true;
+          detailsBtn.disabled = true;
+        } else {
+          updateButtonStates();
+        }
+        loaderText.textContent = text;
+        loader.classList.toggle('visible', isLoading);
+      }
+
+      function showError(message) {
+        errorBox.textContent = message;
+        errorBox.classList.add('visible');
+      }
+
+      function hideError() {
+        errorBox.classList.remove('visible');
+      }
+
+      function clamp(value, min, max) {
+        if (Number.isNaN(value)) return 0.5;
+        return Math.min(Math.max(value, min), max);
+      }
+
+      function levelToProbability(level) {
+        return { low: 0.2, medium: 0.55, high: 0.85 }[level] ?? 0.5;
+      }
+
+      function probabilityToLevel(probability) {
+        if (probability >= 0.7) return 'high';
+        if (probability >= 0.35) return 'medium';
+        return 'low';
+      }
+    </script>
+  </body>
+</html>
